@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  root: './src',  // Указываем корень проекта
   build: {
     outDir: 'dist',  // Папка для сборки
     emptyOutDir: true,  // Очистить папку перед новой сборкой

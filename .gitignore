@@ -2,3 +2,7 @@ node_modules/
 dist/
 .env
 SQLite/
+my_database
+
+*.puml
+*.plantuml

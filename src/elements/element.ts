@@ -1,6 +1,6 @@
-import { TextGenerator } from "./generators/textGenerator";
-import { ImageGenerator } from "./generators/imageGenerator";
-import { QRCodeGenerator } from "./generators/qrGenerator";
+import { TextGenerator } from "../scripts/generators/textGenerator";
+import { ImageGenerator } from "../scripts/generators/imageGenerator";
+import { QRCodeGenerator } from "../scripts/generators/qrGenerator";
 
 export interface ElementData {
   type: "user-text" | "user-image" | "user-qr";

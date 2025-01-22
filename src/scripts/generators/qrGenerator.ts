@@ -1,4 +1,4 @@
-import { ElementData } from '../element';
+import { ElementData } from '../../elements/element';
 import { enableDragging } from '../../elements/moveElement';
 import { enableResizeForElements } from '../../elements/resize';
 import QRCode from 'qrcode';

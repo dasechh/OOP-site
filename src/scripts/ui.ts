@@ -1,4 +1,4 @@
-import { ElementData, ElementManager } from "./element";
+import { ElementData, ElementManager } from "../elements/element";
 import { toJpeg } from "html-to-image";
 import { TextEditor } from "./editors/textEditor";
 import { QREditor } from "./editors/qrEditor";

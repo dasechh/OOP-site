@@ -1,6 +1,6 @@
 import { BaseEditor } from "./baseEditor";
 import { QRCodeGenerator } from "../generators/qrGenerator";
-import { ElementData } from "../element";
+import { ElementData } from "../../elements/element";
 import { IElementEditor } from "../ui";
 
 export class QREditor extends BaseEditor implements IElementEditor {

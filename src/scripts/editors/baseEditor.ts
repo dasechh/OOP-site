@@ -1,4 +1,4 @@
-import { ElementData } from "../element";
+import { ElementData } from "../../elements/element";
 
 export abstract class BaseEditor {
   protected rightPanel: HTMLDivElement;

@@ -1,5 +1,5 @@
 import { BaseEditor } from "./baseEditor";
-import { ElementData } from "../element";
+import { ElementData } from "../../elements/element";
 import { IElementEditor } from "../ui";
 
 export class TextEditor extends BaseEditor implements IElementEditor {

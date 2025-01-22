@@ -1,4 +1,4 @@
-import { UI } from './scripts/ui';
+import { UI } from "./scripts/ui";
 
 class App {
   private canvasContainer: HTMLDivElement;
@@ -11,10 +11,9 @@ class App {
   }
 
   private createCanvas(): HTMLDivElement {
-    const div = document.createElement('div');
-    div.classList.add('canvas-container');
-    
-    // Добавляем div в тело документа
+    const div = document.createElement("div");
+    div.classList.add("canvas-container");
+
     document.body.appendChild(div);
     return div;
   }

@@ -1,9 +1,9 @@
-import { TextGenerator } from './generators/textGenerator';
-import { ImageGenerator } from './generators/imageGenerator';
-import { QRCodeGenerator } from './generators/qrGenerator';
+import { TextGenerator } from "./generators/textGenerator";
+import { ImageGenerator } from "./generators/imageGenerator";
+import { QRCodeGenerator } from "./generators/qrGenerator";
 
 export interface ElementData {
-  type: 'user-text' | 'user-image' | 'user-qr';
+  type: "user-text" | "user-image" | "user-qr";
   element: HTMLElement;
 }
 
@@ -34,6 +34,6 @@ export class ElementManager {
   }
 
   getElementData(element: HTMLElement): ElementData | undefined {
-    return this.elements.find(el => el.element === element);
+    return this.elements.find((el) => el.element === element);
   }
 }

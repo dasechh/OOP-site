@@ -1,19 +1,23 @@
-import sqlite3 from 'sqlite3';
-import bcrypt from 'bcrypt';
+import sqlite3 from "sqlite3";
+import bcrypt from "bcrypt";
 
 export const openDb = (): sqlite3.Database => {
-  return new sqlite3.Database('./my_database.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-    if (err) {
-      console.error('Ошибка подключения к базе данных:', err.message);
-    } else {
-      console.log('База данных подключена');
+  return new sqlite3.Database(
+    "./my_database.db",
+    sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
+    (err) => {
+      if (err) {
+        console.error("Ошибка подключения к базе данных:", err.message);
+      } else {
+        console.log("База данных подключена");
+      }
     }
-  });
+  );
 };
 
 export const resetUsersTable = async () => {
   const db = openDb();
-  const dropQuery = 'DROP TABLE IF EXISTS users';
+  const dropQuery = "DROP TABLE IF EXISTS users";
   const createQuery = `
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,7 +25,7 @@ export const resetUsersTable = async () => {
       password TEXT NOT NULL
     )
   `;
-  
+
   try {
     await new Promise<void>((resolve, reject) => {
       db.run(dropQuery, (err) => {
@@ -29,17 +33,17 @@ export const resetUsersTable = async () => {
         else resolve();
       });
     });
-    console.log('Старая таблица users удалена (если она существовала)');
-    
+    console.log("Старая таблица users удалена (если она существовала)");
+
     await new Promise<void>((resolve, reject) => {
       db.run(createQuery, (err) => {
         if (err) reject(err);
         else resolve();
       });
     });
-    console.log('Новая таблица users создана');
+    console.log("Новая таблица users создана");
   } catch (err) {
-    console.error('Ошибка при работе с таблицей:', err);
+    console.error("Ошибка при работе с таблицей:", err);
   } finally {
     db.close();
   }
@@ -47,7 +51,7 @@ export const resetUsersTable = async () => {
 
 export const getUserByEmail = async (email: string): Promise<any | null> => {
   const db = openDb();
-  const query = 'SELECT * FROM users WHERE email = ?';
+  const query = "SELECT * FROM users WHERE email = ?";
   return new Promise((resolve, reject) => {
     db.get(query, [email], (err, row) => {
       if (err) reject(err);
@@ -64,16 +68,19 @@ export const insertUser = async (email: string, password: string) => {
       INSERT INTO users (email, password)
       VALUES (?, ?)
     `;
-    
+
     await new Promise<void>((resolve, reject) => {
       db.run(query, [email, hashedPassword], (err) => {
         if (err) reject(err);
         else resolve();
       });
     });
-    console.log('Пользователь добавлен');
+    console.log("Пользователь добавлен");
   } catch (err) {
-    console.error('Ошибка хэширования пароля или добавления пользователя:', err);
+    console.error(
+      "Ошибка хэширования пароля или добавления пользователя:",
+      err
+    );
     throw err;
   }
 };

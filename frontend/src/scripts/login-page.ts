@@ -2,34 +2,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.querySelector(".login-form") as HTMLElement;
   const registerForm = document.querySelector(".register-form") as HTMLElement;
   const showLoginLink = document.getElementById("showLogin") as HTMLElement;
-  const showRegisterLink = document.getElementById(
-    "showRegister"
-  ) as HTMLElement;
-  const registerFormElement = document.getElementById(
-    "registerForm"
-  ) as HTMLFormElement;
-  const loginFormElement = document.getElementById(
-    "loginForm"
-  ) as HTMLFormElement;
+  const showRegisterLink = document.getElementById("showRegister") as HTMLElement;
+  const registerFormElement = document.getElementById("registerForm") as HTMLFormElement;
+  const loginFormElement = document.getElementById("loginForm") as HTMLFormElement;
   const loginEmail = document.getElementById("loginEmail") as HTMLInputElement;
-  const loginPassword = document.getElementById(
-    "loginPassword"
-  ) as HTMLInputElement;
-  const registerEmail = document.getElementById(
-    "registerEmail"
-  ) as HTMLInputElement;
-  const registerPassword = document.getElementById(
-    "registerPassword"
-  ) as HTMLInputElement;
-  const registerErrorText = document.getElementById(
-    "registerErrorText"
-  ) as HTMLElement;
-  const loginErrorText = document.getElementById(
-    "loginErrorText"
-  ) as HTMLElement;
-  const registerSuccessText = document.getElementById(
-    "registerSuccessText"
-  ) as HTMLElement;
+  const loginPassword = document.getElementById("loginPassword") as HTMLInputElement;
+  const registerEmail = document.getElementById("registerEmail") as HTMLInputElement;
+  const registerPassword = document.getElementById("registerPassword") as HTMLInputElement;
+  const registerErrorText = document.getElementById("registerErrorText") as HTMLElement;
+  const loginErrorText = document.getElementById("loginErrorText") as HTMLElement;
+  const registerSuccessText = document.getElementById("registerSuccessText") as HTMLElement;
 
   showLoginLink.addEventListener("click", (event) => {
     event.preventDefault();
@@ -76,29 +58,24 @@ document.addEventListener("DOMContentLoaded", () => {
             registerForm.style.display = "none";
 
             const loginSuccessText = document.createElement("p");
-            loginSuccessText.textContent =
-              "Вы успешно зарегистрированы. Можете войти!";
+            loginSuccessText.textContent = "Вы успешно зарегистрированы. Можете войти!";
             loginSuccessText.style.color = "green";
             loginForm.insertBefore(loginSuccessText, loginFormElement);
           } else {
-            registerErrorText.textContent =
-              result.message || "Произошла ошибка при регистрации.";
+            registerErrorText.textContent = result.message || "Произошла ошибка при регистрации.";
             registerErrorText.style.color = "red";
             registerErrorText.style.display = "block";
             registerSuccessText.style.display = "none";
           }
         } else {
           const errorData = await response.json();
-          registerErrorText.textContent =
-            errorData.message ||
-            "Произошла ошибка при регистрации. Попробуйте снова.";
+          registerErrorText.textContent = errorData.message || "Произошла ошибка при регистрации. Попробуйте снова.";
           registerErrorText.style.color = "red";
           registerErrorText.style.display = "block";
           registerSuccessText.style.display = "none";
         }
       } catch (error) {
-        registerErrorText.textContent =
-          "Произошла ошибка при регистрации. Попробуйте снова.";
+        registerErrorText.textContent = "Произошла ошибка при регистрации. Попробуйте снова.";
         registerErrorText.style.color = "red";
         registerErrorText.style.display = "block";
         registerSuccessText.style.display = "none";
@@ -131,24 +108,24 @@ document.addEventListener("DOMContentLoaded", () => {
           const result = await response.json();
 
           if (result.status === "success") {
-            window.location.href = "design-editor.html";
+            // Сохраняем email в localStorage
+            localStorage.setItem('user_email', email);
+
+            // Перенаправляем на страницу design-editor.html
+            window.location.href = "main-menu.html";
           } else {
-            loginErrorText.textContent =
-              result.message || "Произошла ошибка при входе.";
+            loginErrorText.textContent = result.message || "Произошла ошибка при входе.";
             loginErrorText.style.color = "red";
             loginErrorText.style.display = "block";
           }
         } else {
           const errorData = await response.json();
-          loginErrorText.textContent =
-            errorData.message ||
-            "Произошла ошибка при входе. Попробуйте снова.";
+          loginErrorText.textContent = errorData.message || "Произошла ошибка при входе. Попробуйте снова.";
           loginErrorText.style.color = "red";
           loginErrorText.style.display = "block";
         }
       } catch (error) {
-        loginErrorText.textContent =
-          "Произошла ошибка при входе. Попробуйте снова.";
+        loginErrorText.textContent = "Произошла ошибка при входе. Попробуйте снова.";
         loginErrorText.style.color = "red";
         loginErrorText.style.display = "block";
       }

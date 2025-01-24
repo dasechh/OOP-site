@@ -9,5 +9,15 @@
   </head>
   <body>
     <script type="module" src="src/main.ts"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const userEmail = localStorage.getItem('user_email');
+        if (userEmail) {
+          console.log("Email пользователя:", userEmail);
+        } else {
+          console.error("Email пользователя не найден");
+        }
+      });
+    </script>
   </body>
 </html>

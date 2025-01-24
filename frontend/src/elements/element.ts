@@ -1,6 +1,8 @@
 import { TextGenerator } from "../scripts/generators/textGenerator";
 import { ImageGenerator } from "../scripts/generators/imageGenerator";
 import { QRCodeGenerator } from "../scripts/generators/qrGenerator";
+import { enableDragging } from "./moveElement";
+import { enableResizeForElements } from "./resize";
 
 export interface ElementData {
   type: "user-text" | "user-image" | "user-qr";
@@ -9,7 +11,7 @@ export interface ElementData {
 
 export class ElementManager {
   private canvas: HTMLDivElement;
-  private elements: ElementData[] = [];
+  public elements: ElementData[] = [];
   private textGenerator: TextGenerator;
   private imageGenerator: ImageGenerator;
   public qrGenerator: QRCodeGenerator;
@@ -29,8 +31,41 @@ export class ElementManager {
     this.imageGenerator.handleImageInput(event);
   }
 
-  createNewQR(content: string): void {
-    this.qrGenerator.createNewQR(content);
+  createNewQR(content: string): HTMLCanvasElement {
+    return this.qrGenerator.createNewQR(content);
+  }
+
+  addImageElementFromDatabase(elementData: any): void {
+    const imgElement = document.createElement('img');
+    imgElement.id = elementData.id;
+    imgElement.src = elementData.base64_image; // base64 код изображения
+    imgElement.classList.add('user-image');
+
+    const allowedStyles = [
+      'position', 'left', 'top', 'width', 'height', 'box-sizing',
+      'border-radius', 'box-shadow'
+    ];
+
+    const styles = JSON.parse(elementData.styles);
+    for (const [key, value] of Object.entries(styles)) {
+      if (value && allowedStyles.includes(key)) {
+        imgElement.style.setProperty(key, value as string);
+      }
+    }
+
+    // Установить необходимые атрибуты
+    imgElement.setAttribute('tabindex', '0');
+    imgElement.setAttribute('data-x', elementData['data-x'] || '0');
+    imgElement.setAttribute('data-y', elementData['data-y'] || '0');
+
+    // Добавить на холст
+    this.canvas.appendChild(imgElement);
+
+    // Добавить элемент в массив
+    this.elements.push({ type: 'user-image', element: imgElement });
+    enableDragging(imgElement, this.canvas);
+    enableResizeForElements(imgElement, this.canvas);
+    imgElement.focus();
   }
 
   getElementData(element: HTMLElement): ElementData | undefined {

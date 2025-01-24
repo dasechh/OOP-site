@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { registerUser, loginUser } from "./authService.js";
+import { registerUser, loginUser, saveCanvasData, updateCanvasData, getCanvasById, getCanvasesByUserEmail, getCanvasElements } from "./authService.js";
 import { makeUsersTable } from "./db.js";
 
 const app = express();
@@ -15,8 +15,8 @@ app.use(
   })
 );
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // Роут для регистрации
 app.post("/register", async (req: Request, res: Response) => {
@@ -48,6 +48,65 @@ app.post("/login", async (req: Request, res: Response) => {
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error("Ошибка авторизации:", err.message);
+      res.status(400).json({ status: "error", message: err.message });
+    } else {
+      console.error("Неизвестная ошибка:", err);
+      res.status(400).json({ status: "error", message: "Неизвестная ошибка" });
+    }
+  }
+});
+
+// Новый роут для сохранения данных
+app.post("/save", async (req: Request, res: Response) => {
+  const { user_email, canvasName, elements } = req.body;
+
+  try {
+    const existingCanvas = await getCanvasById(elements[0].id);
+    if (existingCanvas) {
+      await updateCanvasData(user_email, canvasName, elements);
+    } else {
+      await saveCanvasData(user_email, canvasName, elements);
+    }
+    res.status(200).json({ status: "success", message: "Данные сохранены" });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error("Ошибка сохранения данных:", err.message);
+      res.status(400).json({ status: "error", message: err.message });
+    } else {
+      console.error("Неизвестная ошибка:", err);
+      res.status(400).json({ status: "error", message: "Неизвестная ошибка" });
+    }
+  }
+});
+
+// Роут для получения канвасов пользователя
+app.get("/canvases", async (req: Request, res: Response) => {
+  const { user_email } = req.query;
+
+  try {
+    const canvases = await getCanvasesByUserEmail(user_email as string);
+    res.status(200).json({ status: "success", canvases });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error("Ошибка получения канвасов:", err.message);
+      res.status(400).json({ status: "error", message: err.message });
+    } else {
+      console.error("Неизвестная ошибка:", err);
+      res.status(400).json({ status: "error", message: "Неизвестная ошибка" });
+    }
+  }
+});
+
+// Роут для получения элементов канваса
+app.get("/canvas-elements", async (req: Request, res: Response) => {
+  const { user_email, canvas_name } = req.query;
+
+  try {
+    const elements = await getCanvasElements(user_email as string, canvas_name as string);
+    res.status(200).json({ status: "success", elements });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error("Ошибка получения элементов канваса:", err.message);
       res.status(400).json({ status: "error", message: err.message });
     } else {
       console.error("Неизвестная ошибка:", err);

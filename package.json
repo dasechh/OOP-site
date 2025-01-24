@@ -6,7 +6,7 @@
         "dev": "vite",
         "build": "vite build",
         "start": "concurrently \"vite\" \"npm run build-server",
-        "build-server": "tsc && node dist/backend/server.js",
+        "build-server": "tsc && node dist/server.js",
         "serve": "vite preview"
     },
     "devDependencies": {
@@ -29,6 +29,7 @@
         "express": "^4.21.2",
         "html-to-image": "^1.11.11",
         "interactjs": "^1.10.27",
-        "sqlite3": "^5.0.2"
+        "sqlite3": "^5.0.2",
+        "uuid": "^11.0.5"
     }
 }

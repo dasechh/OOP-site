@@ -12,7 +12,7 @@ export class QRCodeGenerator {
     this.elements = elements;
   }
 
-  createNewQR(content: string): void {
+  createNewQR(content: string): HTMLCanvasElement {
     const canvas = this.createElement('canvas', 'user-qr', this.generateUniqueId()) as HTMLCanvasElement;
     this.generateQR(content, canvas);
     this.positionElementInCenter(canvas);
@@ -22,8 +22,9 @@ export class QRCodeGenerator {
     // Установка атрибута tabindex и фокусировка на элементе
     canvas.setAttribute('tabindex', '0');
     canvas.focus();
-  }
 
+    return canvas;
+}
   private createElement(tag: string, className: string, id: string): HTMLElement {
     const element = document.createElement(tag);
     element.id = id;

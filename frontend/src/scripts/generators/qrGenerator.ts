@@ -1,7 +1,7 @@
-import { ElementData } from '../../elements/element';
-import { enableDragging } from '../../elements/moveElement';
-import { enableResizeForElements } from '../../elements/resize';
-import QRCode from 'qrcode';
+import { ElementData } from "../../elements/element";
+import { enableDragging } from "../../elements/moveElement";
+import { enableResizeForElements } from "../../elements/resize";
+import QRCode from "qrcode";
 
 export class QRCodeGenerator {
   private canvas: HTMLDivElement;
@@ -13,27 +13,37 @@ export class QRCodeGenerator {
   }
 
   createNewQR(content: string): HTMLCanvasElement {
-    const canvas = this.createElement('canvas', 'user-qr', this.generateUniqueId()) as HTMLCanvasElement;
+    const canvas = this.createElement(
+      "canvas",
+      "user-qr",
+      this.generateUniqueId()
+    ) as HTMLCanvasElement;
     this.generateQR(content, canvas);
     this.positionElementInCenter(canvas);
     enableDragging(canvas, this.canvas);
     enableResizeForElements(canvas, this.canvas);
 
-    // Установка атрибута tabindex и фокусировка на элементе
-    canvas.setAttribute('tabindex', '0');
+    canvas.setAttribute("tabindex", "0");
     canvas.focus();
 
     return canvas;
-}
-  private createElement(tag: string, className: string, id: string): HTMLElement {
+  }
+  private createElement(
+    tag: string,
+    className: string,
+    id: string
+  ): HTMLElement {
     const element = document.createElement(tag);
     element.id = id;
     element.classList.add(className);
 
-    element.style.position = 'absolute';
+    element.style.position = "absolute";
     this.canvas.appendChild(element);
-    
-    this.elements.push({ type: className as 'user-text' | 'user-image' | 'user-qr', element });
+
+    this.elements.push({
+      type: className as "user-text" | "user-image" | "user-qr",
+      element,
+    });
     return element;
   }
 
@@ -49,14 +59,14 @@ export class QRCodeGenerator {
   public generateQR(content: string, canvas: HTMLCanvasElement): void {
     QRCode.toCanvas(canvas, content, (error) => {
       if (error) {
-        console.error('Ошибка при генерации QR-кода:', error);
+        console.error("Ошибка при генерации QR-кода:", error);
       } else {
-        console.log('QR-код успешно сгенерирован');
+        console.log("QR-код успешно сгенерирован");
       }
     });
   }
 
   private generateUniqueId(): string {
-    return 'qr-' + crypto.getRandomValues(new Uint32Array(8)).join('');
+    return "qr-" + crypto.getRandomValues(new Uint32Array(8)).join("");
   }
 }

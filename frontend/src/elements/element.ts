@@ -36,14 +36,20 @@ export class ElementManager {
   }
 
   addImageElementFromDatabase(elementData: any): void {
-    const imgElement = document.createElement('img');
+    const imgElement = document.createElement("img");
     imgElement.id = elementData.id;
-    imgElement.src = elementData.base64_image; // base64 код изображения
-    imgElement.classList.add('user-image');
+    imgElement.src = elementData.base64_image;
+    imgElement.classList.add("user-image");
 
     const allowedStyles = [
-      'position', 'left', 'top', 'width', 'height', 'box-sizing',
-      'border-radius', 'box-shadow'
+      "position",
+      "left",
+      "top",
+      "width",
+      "height",
+      "box-sizing",
+      "border-radius",
+      "box-shadow",
     ];
 
     const styles = JSON.parse(elementData.styles);
@@ -53,16 +59,13 @@ export class ElementManager {
       }
     }
 
-    // Установить необходимые атрибуты
-    imgElement.setAttribute('tabindex', '0');
-    imgElement.setAttribute('data-x', elementData['data-x'] || '0');
-    imgElement.setAttribute('data-y', elementData['data-y'] || '0');
+    imgElement.setAttribute("tabindex", "0");
+    imgElement.setAttribute("data-x", elementData["data-x"] || "0");
+    imgElement.setAttribute("data-y", elementData["data-y"] || "0");
 
-    // Добавить на холст
     this.canvas.appendChild(imgElement);
 
-    // Добавить элемент в массив
-    this.elements.push({ type: 'user-image', element: imgElement });
+    this.elements.push({ type: "user-image", element: imgElement });
     enableDragging(imgElement, this.canvas);
     enableResizeForElements(imgElement, this.canvas);
     imgElement.focus();

@@ -1,4 +1,12 @@
-import { getUserByEmail, insertUser, saveCanvasData as saveCanvas, updateCanvasData, getCanvasById, getCanvasesByUserEmail as fetchCanvasesByUserEmail, getCanvasElements as getElements } from "./db.js";
+import {
+  getUserByEmail,
+  insertUser,
+  saveCanvasData as saveCanvas,
+  updateCanvasData,
+  getCanvasById,
+  getCanvasesByUserEmail as fetchCanvasesByUserEmail,
+  getCanvasElements as getElements,
+} from "./db.js";
 
 export const registerUser = async (email: string, password: string) => {
   const existingUser = await getUserByEmail(email);
@@ -7,7 +15,7 @@ export const registerUser = async (email: string, password: string) => {
   }
 
   console.log(`Пароль для ${email}: ${password}`);
-  await insertUser(email, password); // Сохраняем пользователя с паролем в открытом виде
+  await insertUser(email, password);
   console.log("Пользователь зарегистрирован");
 };
 
@@ -23,7 +31,11 @@ export const loginUser = async (email: string, password: string) => {
   console.log("Вход успешен");
 };
 
-export const saveCanvasData = async (userEmail: string, canvasName: string, elementsData: any) => {
+export const saveCanvasData = async (
+  userEmail: string,
+  canvasName: string,
+  elementsData: any
+) => {
   try {
     const existingCanvas = await getCanvasById(elementsData[0].id);
     if (existingCanvas) {
@@ -48,7 +60,10 @@ export const getCanvasesByUserEmail = async (userEmail: string) => {
   }
 };
 
-export const getCanvasElements = async (userEmail: string, canvasName: string) => {
+export const getCanvasElements = async (
+  userEmail: string,
+  canvasName: string
+) => {
   try {
     const elements = await getElements(userEmail, canvasName);
     return elements;

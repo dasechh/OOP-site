@@ -1,65 +1,71 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Главное меню</title>
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/style.css" />
     <style>
-        .canvas-item {
-            display: block;
-            margin-bottom: 10px;
-        }
-        #createNewCanvas {
-            background-color: green;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-        }
-        #createNewCanvas:hover {
-            background-color: darkgreen;
-        }
+      .canvas-item {
+        display: block;
+        margin-bottom: 10px;
+      }
+      #createNewCanvas {
+        background-color: green;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+      }
+      #createNewCanvas:hover {
+        background-color: darkgreen;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Ваши дизайны</h1>
     <div id="canvasList"></div>
     <button id="createNewCanvas">Создать свой новый дизайн</button>
 
     <script>
-        document.addEventListener("DOMContentLoaded", async () => {
-            const userEmail = localStorage.getItem('user_email');
-            if (!userEmail) {
-                console.error("Ошибка: user_email не найден в localStorage");
-                return;
-            }
+      document.addEventListener("DOMContentLoaded", async () => {
+        const userEmail = localStorage.getItem("user_email");
+        if (!userEmail) {
+          console.error("Ошибка: user_email не найден в localStorage");
+          return;
+        }
 
-            try {
-                const response = await fetch(`http://localhost:3000/canvases?user_email=${userEmail}`);
-                const data = await response.json();
+        try {
+          const response = await fetch(
+            `http://localhost:3000/canvases?user_email=${userEmail}`
+          );
+          const data = await response.json();
 
-                if (data.status === "success") {
-                    const canvasList = document.getElementById("canvasList");
-                    data.canvases.forEach(canvas => {
-                        const canvasItem = document.createElement("a");
-                        canvasItem.classList.add("canvas-item");
-                        canvasItem.textContent = canvas.canvas_name;
-                        canvasItem.href = `design-editor.html?canvas_name=${canvas.canvas_name}`;
-                        canvasList.appendChild(canvasItem);
-                    });
-                } else {
-                    console.error("Ошибка при получении данных канвасов:", data.message);
-                }
-            } catch (error) {
-                console.error("Ошибка при получении данных канвасов:", error);
-            }
+          if (data.status === "success") {
+            const canvasList = document.getElementById("canvasList");
+            data.canvases.forEach((canvas) => {
+              const canvasItem = document.createElement("a");
+              canvasItem.classList.add("canvas-item");
+              canvasItem.textContent = canvas.canvas_name;
+              canvasItem.href = `design-editor.html?canvas_name=${canvas.canvas_name}`;
+              canvasList.appendChild(canvasItem);
+            });
+          } else {
+            console.error(
+              "Ошибка при получении данных канвасов:",
+              data.message
+            );
+          }
+        } catch (error) {
+          console.error("Ошибка при получении данных канвасов:", error);
+        }
 
-            const createNewCanvasButton = document.getElementById("createNewCanvas");
-            createNewCanvasButton.onclick = () => {
-                window.location.href = 'design-editor.html';
-            };
-        });
+        const createNewCanvasButton =
+          document.getElementById("createNewCanvas");
+        createNewCanvasButton.onclick = () => {
+          window.location.href = "design-editor.html";
+        };
+      });
     </script>
-</body>
+  </body>
 </html>

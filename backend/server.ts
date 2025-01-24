@@ -1,7 +1,15 @@
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { registerUser, loginUser, saveCanvasData, updateCanvasData, getCanvasById, getCanvasesByUserEmail, getCanvasElements } from "./authService.js";
+import {
+  registerUser,
+  loginUser,
+  saveCanvasData,
+  updateCanvasData,
+  getCanvasById,
+  getCanvasesByUserEmail,
+  getCanvasElements,
+} from "./authService.js";
 import { makeUsersTable } from "./db.js";
 
 const app = express();
@@ -15,10 +23,9 @@ app.use(
   })
 );
 
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
-// Роут для регистрации
 app.post("/register", async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
@@ -38,7 +45,6 @@ app.post("/register", async (req: Request, res: Response) => {
   }
 });
 
-// Роут для авторизации
 app.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
@@ -56,7 +62,6 @@ app.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-// Новый роут для сохранения данных
 app.post("/save", async (req: Request, res: Response) => {
   const { user_email, canvasName, elements } = req.body;
 
@@ -79,7 +84,6 @@ app.post("/save", async (req: Request, res: Response) => {
   }
 });
 
-// Роут для получения канвасов пользователя
 app.get("/canvases", async (req: Request, res: Response) => {
   const { user_email } = req.query;
 
@@ -97,12 +101,14 @@ app.get("/canvases", async (req: Request, res: Response) => {
   }
 });
 
-// Роут для получения элементов канваса
 app.get("/canvas-elements", async (req: Request, res: Response) => {
   const { user_email, canvas_name } = req.query;
 
   try {
-    const elements = await getCanvasElements(user_email as string, canvas_name as string);
+    const elements = await getCanvasElements(
+      user_email as string,
+      canvas_name as string
+    );
     res.status(200).json({ status: "success", elements });
   } catch (err: unknown) {
     if (err instanceof Error) {

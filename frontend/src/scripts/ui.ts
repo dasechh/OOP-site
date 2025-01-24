@@ -58,7 +58,9 @@ export class UI {
     downloadButton.classList.add("download-button");
     panel.appendChild(downloadButton);
 
-    const exitButton = this.createButton("Главное меню", () => this.exitApplication());
+    const exitButton = this.createButton("Главное меню", () =>
+      this.exitApplication()
+    );
     exitButton.classList.add("exit-button");
     panel.appendChild(exitButton);
 
@@ -112,95 +114,103 @@ export class UI {
     this.createSaveModal();
 
     const modal = document.getElementById("saveModal") as HTMLElement;
-    const closeModal = document.getElementsByClassName("close")[0] as HTMLElement;
-    const saveButton = document.getElementById("saveDesignButton") as HTMLButtonElement;
-    const cancelButton = document.getElementById("cancelButton") as HTMLButtonElement;
-    const designNameInput = document.getElementById("designName") as HTMLInputElement;
+    const closeModal = document.getElementsByClassName(
+      "close"
+    )[0] as HTMLElement;
+    const saveButton = document.getElementById(
+      "saveDesignButton"
+    ) as HTMLButtonElement;
+    const cancelButton = document.getElementById(
+      "cancelButton"
+    ) as HTMLButtonElement;
+    const designNameInput = document.getElementById(
+      "designName"
+    ) as HTMLInputElement;
 
     modal.style.display = "block";
 
     closeModal.onclick = () => {
-        modal.style.display = "none";
+      modal.style.display = "none";
     };
 
     cancelButton.onclick = () => {
-        modal.style.display = "none";
+      modal.style.display = "none";
     };
 
     saveButton.onclick = () => {
-        const canvasName = designNameInput.value;
+      const canvasName = designNameInput.value;
 
-        if (!canvasName) {
-            console.error("Название дизайна не введено");
-            return;
+      if (!canvasName) {
+        console.error("Название дизайна не введено");
+        return;
+      }
+
+      console.log("Сохранение в БД");
+
+      const elements = document.querySelectorAll(".canvas-container *");
+      const elementsData = Array.from(elements).map((element) => {
+        const styles = window.getComputedStyle(element);
+        const styleObject: { [key: string]: string } = {};
+        for (let i = 0; i < styles.length; i++) {
+          styleObject[styles[i]] = styles.getPropertyValue(styles[i]);
         }
 
-        console.log("Сохранение в БД");
+        let base64Image = "";
+        if (element.tagName === "IMG") {
+          const img = element as HTMLImageElement;
+          base64Image = img.src;
+        }
 
-        const elements = document.querySelectorAll('.canvas-container *');
-        const elementsData = Array.from(elements).map(element => {
-            const styles = window.getComputedStyle(element);
-            const styleObject: { [key: string]: string } = {};
-            for (let i = 0; i < styles.length; i++) {
-                styleObject[styles[i]] = styles.getPropertyValue(styles[i]);
-            }
-
-            let base64Image = "";
-            if (element.tagName === "IMG") {
-                const img = element as HTMLImageElement;
-                base64Image = img.src;
-            }
-
-            const attributes: { [key: string]: string | null } = {};
-            Array.from(element.attributes).forEach(attr => {
-                attributes[attr.name] = attr.value;
-            });
-
-            return {
-                id: element.id || null,
-                tagName: element.tagName,
-                styles: JSON.stringify(styleObject), // Сериализуем объект стилей в строку JSON
-                innerHTML: element.innerHTML,
-                base64Image: base64Image,
-                dataContent: element.getAttribute("data-content") || null,
-                attributes: attributes
-            };
+        const attributes: { [key: string]: string | null } = {};
+        Array.from(element.attributes).forEach((attr) => {
+          attributes[attr.name] = attr.value;
         });
 
-        const user_email = localStorage.getItem('user_email');
-        if (!user_email) {
-            console.error("Ошибка: user_email не может быть пустым");
-            return;
-        }
-
-        const payload = {
-            user_email: user_email,
-            canvasName: canvasName,
-            elements: elementsData
+        return {
+          id: element.id || null,
+          tagName: element.tagName,
+          styles: JSON.stringify(styleObject),
+          innerHTML: element.innerHTML,
+          base64Image: base64Image,
+          dataContent: element.getAttribute("data-content") || null,
+          attributes: attributes,
         };
+      });
 
-        fetch('http://localhost:3000/save', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
+      const user_email = localStorage.getItem("user_email");
+      if (!user_email) {
+        console.error("Ошибка: user_email не может быть пустым");
+        return;
+      }
+
+      const payload = {
+        user_email: user_email,
+        canvasName: canvasName,
+        elements: elementsData,
+      };
+
+      fetch("http://localhost:3000/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+          modal.style.display = "none";
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            modal.style.display = "none";
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            modal.style.display = "none";
+        .catch((error) => {
+          console.error("Error:", error);
+          modal.style.display = "none";
         });
     };
 
     window.onclick = (event) => {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
     };
   }
 
@@ -218,7 +228,7 @@ export class UI {
         </div>
     `;
 
-    const modalElement = document.createElement('div');
+    const modalElement = document.createElement("div");
     modalElement.innerHTML = modalHtml;
     document.body.appendChild(modalElement);
   }
@@ -236,7 +246,7 @@ export class UI {
     return button;
   }
 
-   handleFocus(event: FocusEvent): void {
+  handleFocus(event: FocusEvent): void {
     const element = event.target as HTMLElement;
     const elementData = this.elementManager.getElementData(element);
 
@@ -339,9 +349,9 @@ export class UI {
   }
 
   private async loadElementsFromDatabase(): Promise<void> {
-    const user_email = localStorage.getItem('user_email');
+    const user_email = localStorage.getItem("user_email");
     const urlParams = new URLSearchParams(window.location.search);
-    const canvas_name = urlParams.get('canvas_name');
+    const canvas_name = urlParams.get("canvas_name");
 
     if (!user_email) {
       console.error("Ошибка: user_email не найден в localStorage");
@@ -354,13 +364,15 @@ export class UI {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/canvas-elements?user_email=${user_email}&canvas_name=${canvas_name}`);
+      const response = await fetch(
+        `http://localhost:3000/canvas-elements?user_email=${user_email}&canvas_name=${canvas_name}`
+      );
       const data = await response.json();
 
       if (data.status === "success") {
         data.elements.forEach((elementData: any) => {
           if (elementData.id.startsWith("text")) {
-            console.log('Создание текстового элемента:', elementData);
+            console.log("Создание текстового элемента:", elementData);
             const textElement = this.elementManager.createTextElement();
             if (!textElement) {
               console.error("Ошибка при создании текстового элемента");
@@ -370,8 +382,17 @@ export class UI {
             textElement.innerHTML = elementData.inner_html;
 
             const allowedStyles = [
-              'position', 'left', 'top', 'width', 'height', 'box-sizing',
-              'color', 'text-shadow', 'text-align', 'font-size', 'font-family'
+              "position",
+              "left",
+              "top",
+              "width",
+              "height",
+              "box-sizing",
+              "color",
+              "text-shadow",
+              "text-align",
+              "font-size",
+              "font-family",
             ];
 
             const styles = JSON.parse(elementData.styles);
@@ -381,24 +402,27 @@ export class UI {
               }
             }
 
-            // Set necessary attributes
-            textElement.setAttribute('tabindex', '0');
-            textElement.setAttribute('data-x', elementData['data-x'] || '0');
-            textElement.setAttribute('data-y', elementData['data-y'] || '0');
+            textElement.setAttribute("tabindex", "0");
+            textElement.setAttribute("data-x", elementData["data-x"] || "0");
+            textElement.setAttribute("data-y", elementData["data-y"] || "0");
 
-            // Добавить элемент в массив
-            this.elementManager.elements.push({ type: 'user-text', element: textElement });
+            this.elementManager.elements.push({
+              type: "user-text",
+              element: textElement,
+            });
 
-            // Update right panel
-            const textElementData = this.elementManager.getElementData(textElement);
+            const textElementData =
+              this.elementManager.getElementData(textElement);
             if (textElementData) {
               this.updateRightPanel(textElementData);
             } else {
               console.error("Ошибка: данные текстового элемента не найдены");
             }
           } else if (elementData.id.startsWith("qr")) {
-            console.log('Создание QR кода:', elementData);
-            const qrElement = this.elementManager.createNewQR(elementData.data_content || 'текст');
+            console.log("Создание QR кода:", elementData);
+            const qrElement = this.elementManager.createNewQR(
+              elementData.data_content || "текст"
+            );
             if (!qrElement) {
               console.error("Ошибка при создании QR кода");
               return;
@@ -406,32 +430,43 @@ export class UI {
             qrElement.id = elementData.id;
 
             const allowedStyles = [
-              'position', 'left', 'top', 'width', 'height', 'border-radius',
-              'border-top-left-radius', 'border-top-right-radius',
-              'border-bottom-left-radius', 'border-bottom-right-radius',
-              'border-start-start-radius', 'border-start-end-radius',
-              'border-end-start-radius', 'border-end-end-radius',
-              'box-shadow'
+              "position",
+              "left",
+              "top",
+              "width",
+              "height",
+              "border-radius",
+              "border-top-left-radius",
+              "border-top-right-radius",
+              "border-bottom-left-radius",
+              "border-bottom-right-radius",
+              "border-start-start-radius",
+              "border-start-end-radius",
+              "border-end-start-radius",
+              "border-end-end-radius",
+              "box-shadow",
             ];
 
             const styles = JSON.parse(elementData.styles);
-            console.log('Styles:', styles);
+            console.log("Styles:", styles);
             for (const [key, value] of Object.entries(styles)) {
               if (value && allowedStyles.includes(key)) {
-                console.log('Setting style:', key, value);
+                console.log("Setting style:", key, value);
                 qrElement.style.setProperty(key, value as string);
               }
             }
-            console.log('elementData:', elementData.data_content);
-            qrElement.setAttribute('data-content', elementData.data_content || 'текст');
-            // Set necessary attributes
-            qrElement.setAttribute('tabindex', '0');
+            console.log("elementData:", elementData.data_content);
+            qrElement.setAttribute(
+              "data-content",
+              elementData.data_content || "текст"
+            );
+            qrElement.setAttribute("tabindex", "0");
 
+            this.elementManager.elements.push({
+              type: "user-qr",
+              element: qrElement,
+            });
 
-            // Добавить элемент в массив
-            this.elementManager.elements.push({ type: 'user-qr', element: qrElement });
-
-            // Update right panel
             const qrElementData = this.elementManager.getElementData(qrElement);
             if (qrElementData) {
               this.updateRightPanel(qrElementData);
@@ -439,12 +474,14 @@ export class UI {
               console.error("Ошибка: данные элемента QR не найдены");
             }
           } else if (elementData.id.startsWith("image")) {
-            console.log('Создание элемента изображения:', elementData);
+            console.log("Создание элемента изображения:", elementData);
             this.elementManager.addImageElementFromDatabase(elementData);
 
-            // Update right panel
-            const imgElement = document.getElementById(elementData.id) as HTMLElement;
-            const imgElementData = this.elementManager.getElementData(imgElement);
+            const imgElement = document.getElementById(
+              elementData.id
+            ) as HTMLElement;
+            const imgElementData =
+              this.elementManager.getElementData(imgElement);
             if (imgElementData) {
               this.updateRightPanel(imgElementData);
             } else {

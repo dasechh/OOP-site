@@ -3,7 +3,6 @@ dist/
 .env
 SQLite/
 
-*.db
 *.puml
 *.plantuml
 node_modules

@@ -17,6 +17,14 @@
       "*": ["node_modules/*", "src/*"]
     }
   },
-  "include": ["src/**/*", "src/scripts/utils/editorUtils.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*",
+    "src/elements/**/*",
+    "src/scripts/**/*",
+    "frontend/public/styles/**/*",
+    "src/scripts/editors/**/*",
+    "src/scripts/generators/**/*",
+    "backend/**/*"
+  ],
+  "exclude": ["node_modules", "dist"]
 }

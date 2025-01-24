@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 
 export const openDb = (): sqlite3.Database => {
   return new sqlite3.Database(
-    "./my_database.db",
+    "backend/database.db",
     sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
     (err) => {
       if (err) {
@@ -15,9 +15,8 @@ export const openDb = (): sqlite3.Database => {
   );
 };
 
-export const resetUsersTable = async () => {
+export const makeUsersTable = async () => {
   const db = openDb();
-  const dropQuery = "DROP TABLE IF EXISTS users";
   const createQuery = `
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,20 +27,12 @@ export const resetUsersTable = async () => {
 
   try {
     await new Promise<void>((resolve, reject) => {
-      db.run(dropQuery, (err) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
-    console.log("Старая таблица users удалена (если она существовала)");
-
-    await new Promise<void>((resolve, reject) => {
       db.run(createQuery, (err) => {
         if (err) reject(err);
         else resolve();
       });
     });
-    console.log("Новая таблица users создана");
+    console.log("Таблица users создана (если она не существовала)");
   } catch (err) {
     console.error("Ошибка при работе с таблицей:", err);
   } finally {
@@ -64,11 +55,7 @@ export const insertUser = async (email: string, password: string) => {
   try {
     const db = openDb();
     const hashedPassword = await bcrypt.hash(password, 10);
-    const query = `
-      INSERT INTO users (email, password)
-      VALUES (?, ?)
-    `;
-
+    const query = "INSERT INTO users (email, password) VALUES (?, ?)";
     await new Promise<void>((resolve, reject) => {
       db.run(query, [email, hashedPassword], (err) => {
         if (err) reject(err);
@@ -77,10 +64,6 @@ export const insertUser = async (email: string, password: string) => {
     });
     console.log("Пользователь добавлен");
   } catch (err) {
-    console.error(
-      "Ошибка хэширования пароля или добавления пользователя:",
-      err
-    );
-    throw err;
+    console.error("Ошибка при добавлении пользователя:", err);
   }
 };

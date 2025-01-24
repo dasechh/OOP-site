@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { registerUser, loginUser } from "./authService.js";
-import { resetUsersTable } from "./db.js";
+import { makeUsersTable } from "./db.js";
 
 const app = express();
 const port = 3000;
@@ -57,6 +57,6 @@ app.post("/login", async (req: Request, res: Response) => {
 });
 
 app.listen(port, async () => {
-  await resetUsersTable();
+  await makeUsersTable();
   console.log(`Сервер запущен на http://localhost:${port}`);
 });

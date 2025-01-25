@@ -233,30 +233,24 @@ export const updateCanvasData = async (
 ) => {
   const db = openDb();
   try {
+    // Сначала обновляем или добавляем данные элементов
     for (const element of elementsData) {
       const query = `
-        UPDATE elements SET
-          user_email = ?,
-          canvas_name = ?,
-          tag_name = ?,
-          styles = ?,
-          inner_html = ?,
-          base64_image = ?,
-          data_content = ?
-        WHERE id = ?
+        INSERT OR REPLACE INTO elements (id, user_email, canvas_name, tag_name, styles, inner_html, base64_image, data_content)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `;
       await new Promise<void>((resolve, reject) => {
         db.run(
           query,
           [
+            element.id,
             userEmail,
             canvasName,
             element.tagName,
             element.styles,
             element.innerHTML,
             element.base64Image,
-            element.dataContent,
-            element.id,
+            element.dataContent
           ],
           (err) => {
             if (err) reject(err);
@@ -265,9 +259,26 @@ export const updateCanvasData = async (
         );
       });
     }
-    console.log("Данные элементов обновлены");
+    console.log("Данные элементов обновлены или добавлены");
+
+    // После сохранения проверяем наличие шаблона
+    const templateExists = await new Promise<boolean>((resolve, reject) => {
+      db.get(
+        "SELECT 1 FROM elements WHERE user_email = ? AND canvas_name = ? LIMIT 1",
+        [userEmail, "Тестовый дизайн 1"],
+        (err, row) => {
+          if (err) reject(err);
+          else resolve(!!row);
+        }
+      );
+    });
+
+    // Если шаблон не существует, копируем его
+    if (!templateExists) {
+      await copyTemplateDesign(userEmail);
+    }
   } catch (err) {
-    console.error("Ошибка при обновлении данных элементов:", err);
+    console.error("Ошибка при обновлении или добавлении данных элементов:", err);
   } finally {
     db.close();
   }

@@ -13,8 +13,6 @@ export const registerUser = async (email: string, password: string) => {
   if (existingUser) {
     throw new Error("Пользователь с таким email уже существует");
   }
-
-  console.log(`Пароль для ${email}: ${password}`);
   await insertUser(email, password);
   console.log("Пользователь зарегистрирован");
 };
